@@ -64,7 +64,7 @@ https://servicodados.ibge.gov.br/api/docs/localidades
 4) *Guarde o token:* ele será informado no cabeçalho das requisições quando você for usar a API em sistemas/relatórios.  
 5) *Atenção aos limites:* existem limites por minuto; alguns endpoints (como *Bolsa Família por município*) ficam em uma cota mais restrita.  
 
-> Observação prática: ao usar a API em qualquer ferramenta, inclua o token no cabeçalho conforme instruções oficiais do Portal (chave chave-api-dados). Não é necessário detalhar código aqui; basta ter o token à mão e seguir a documentação.
+> Observação prática: ao usar a API em qualquer ferramenta, inclua o token no cabeçalho conforme instruções oficiais do Portal (chave chave-api-dados).
 
 ---
 
