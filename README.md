@@ -1,4 +1,5 @@
-# pIPELINE BOLSA FAMILIA
+# 2517290_rayane_correia_unifor_2025_big_data
+
 Esse repositorio contém o trabalho final da disciplina Big Data e Tecnologias de Armazenamento ministrada pelo professoer Nauber Góis
 # 📊 Pipeline de Dados – Bolsa Família
 
@@ -16,7 +17,6 @@ O projeto foi desenvolvido como parte da disciplina de Big Data – Pós UNIFOR.
    ┃ ┣ 📂 dags #Armazenamento de dags
      ┃ ┣ 📜 pipeline_bolsa_familia.py   # Orquestração principal do pipeline
  ┣ 📂 apps/                         # Scripts de aplicações (extração, transformação, carga)
-   ┣ 📂 f_bolsa_familia_hist/         # Scripts do pipeline Bolsa Família
    ┃ ┣ 📜 api-to-bronze.py # Extração da API → Bronze
    ┃ ┣ 📜 bronze-to-silver.py         # Transformação Bronze → Silver
    ┃ ┣ 📜 gold_dim_municipio_gold.py       # Dimensão Município
@@ -33,6 +33,42 @@ O projeto foi desenvolvido como parte da disciplina de Big Data – Pós UNIFOR.
  ┣ 📜 docker-compose.yml            # Orquestração dos serviços (Airflow, MinIO, Spark, Postgres)
  ┣ 📜 requirements.txt              # Dependências Python
 ```
+## 🌐 APIs utilizadas & como obter a chave
+
+### APIs utilizadas (links oficiais)
+- *Portal da Transparência – Bolsa Família (por município)*  
+  Utilizada para a camada Bronze (ingestão de parcelas por município).
+- *IBGE – Localidades (Municípios/UF)*  
+  Utilizada para referência de códigos IBGE e siglas de UF.
+
+*Links úteis (documentação e catálogos)*
+Portal da Transparência – Documentação geral:
+https://portaldatransparencia.gov.br/api-de-dados
+
+Portal da Transparência – Swagger (catálogo de endpoints):
+https://api.portaldatransparencia.gov.br/
+
+Portal da Transparência – Cadastro para obter a chave (token):
+https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email
+
+Conecta gov.br – Ficha do serviço (como acessar a API):
+https://www.gov.br/conecta/catalogo/apis/portal-da-transparencia-do-governo-federal
+
+IBGE – Documentação da API de Localidades:
+https://servicodados.ibge.gov.br/api/docs/localidades 
+
+## Como conseguir a chave (token) do Portal da Transparência — passo a passo
+1) *Acesse* a página “API de dados – Cadastro” do Portal da Transparência e clique em *“Entrar com gov.br”*.  
+2) *Autentique-se* com sua conta gov.br (selo *Prata/Ouro) **ou* com *CPF + senha* (neste caso, *habilite a verificação em duas etapas*).  
+3) *Confirme o cadastro:* a chave de acesso (token) é **enviada por e-mail* ao endereço vinculado ao seu gov.br.  
+4) *Guarde o token:* ele será informado no cabeçalho das requisições quando você for usar a API em sistemas/relatórios.  
+5) *Atenção aos limites:* existem limites por minuto; alguns endpoints (como **Bolsa Família por município*) ficam em uma cota mais restrita.  
+
+> Observação prática: ao usar a API em qualquer ferramenta, inclua o token no cabeçalho conforme instruções oficiais do Portal (chave chave-api-dados). Não é necessário detalhar código aqui; basta ter o token à mão e seguir a documentação.
+
+---
+
+
 
 ## 🔄 Fluxo do Pipeline
 
@@ -69,9 +105,16 @@ O projeto foi desenvolvido como parte da disciplina de Big Data – Pós UNIFOR.
 
 ---
 
-## ▶ Como Executar
+## ▶ Como executar localmente
 
-### 1. Clonar o repositório
+1) *Subir os serviços*  
 ```bash
-git clone https://github.com/seu-usuario/projeto-bolsa-familia.git
-cd projeto-bolsa-familia
+docker-compose up -d
+acesse: Airflow (http://localhost:8088) e MinIO (http://localhost:9001).
+	2.	Executar a DAG
+Na UI do Airflow, habilite e rode a DAG pipeline_bolsa_familia.
+```
+👩‍💻 Autora
+
+Rayane Correia — Analytics Engineer | Pós-graduação em Engenharia de Dados – UNIFOR
+
