@@ -1,0 +1,121 @@
+services:
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9002:9000"   # API S3 (host:9002 -> container:9000)
+      - "9001:9001"   # Console Web (host:9001 -> container:9001)
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  setup-buckets:
+    image: quay.io/minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin &&
+      mc mb --ignore-existing local/bronze-bolsa-familia-json &&
+      mc mb --ignore-existing local/silver-bolsa-familia-parquet &&
+      mc mb --ignore-existing local/gold-bolsa-familia-parquet &&
+      mc ls local
+      "
+    restart: "no"
+
+  spark:
+    image: bitnami/spark:3.5.0
+    container_name: spark
+    environment:
+      - SPARK_MODE=master
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    volumes:
+      - ./apps:/opt/apps
+    depends_on:
+      - minio
+
+  spark-worker:
+    image: bitnami/spark:3.5.0
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2G
+    depends_on:
+      - spark
+
+  #PARA DESENVOLVIMENTO COM CLUSTER SPARK
+  jupyter:
+      image: jupyter/pyspark-notebook:python-3.11
+      ports:
+        - "8888:8888"
+      environment:
+        - JUPYTER_TOKEN=rayane
+      volumes:
+        - ./apps:/home/jovyan/apps
+        - ./jars:/opt/jars
+      depends_on:
+        - spark
+        - minio
+
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - ./airflow/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 5s
+      retries: 10
+
+  airflow:
+    image: apache/airflow:2.9.3
+    container_name: airflow
+    depends_on:
+      - postgres
+      - spark        
+      - minio
+    environment:
+      AIRFLOW_CORE_EXECUTOR: LocalExecutor
+      AIRFLOW_CORE_LOAD_EXAMPLES: "False"
+      AIRFLOW_DATABASE_SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW_CORE_DEFAULT_TIMEZONE: America/Fortaleza
+    user: "50000:50000"
+    ports:
+      - "8088:8080"                   # UI do Airflow 
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./apps:/opt/apps              #
+      - ./jars:/opt/jars              # hadoop-aws / aws-sdk (se quiser referenciar daqui)
+    command: >
+      bash -lc "
+        airflow db upgrade &&
+        airflow users create
+          -u admin_airflow
+          -p admin_airflow
+          -f Rayane
+          -l Correia
+          -r Admin
+          -e raayanecorreia20@gmail.com || true &&
+        airflow webserver & airflow scheduler
+      "

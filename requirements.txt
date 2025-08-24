@@ -1,0 +1,5 @@
+boto3==1.34.120          # cliente AWS/MinIO
+pyspark==3.5.1           # Spark local
+minio==7.2.7             # cliente oficial do MinIO
+requests==2.32.3         # chamadas HTTP / APIs
+apache-airflow==2.9.1    # orquestração
