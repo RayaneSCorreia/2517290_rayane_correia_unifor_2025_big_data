@@ -59,10 +59,10 @@ https://servicodados.ibge.gov.br/api/docs/localidades
 
 ## Como conseguir a chave (token) do Portal da Transparência — passo a passo
 1) *Acesse* a página “API de dados – Cadastro” do Portal da Transparência e clique em *“Entrar com gov.br”*.  
-2) *Autentique-se* com sua conta gov.br (selo *Prata/Ouro) **ou* com *CPF + senha* (neste caso, *habilite a verificação em duas etapas*).  
-3) *Confirme o cadastro:* a chave de acesso (token) é **enviada por e-mail* ao endereço vinculado ao seu gov.br.  
+2) *Autentique-se* com sua conta gov.br (selo *Prata/Ouro*) *ou* com *CPF + senha* (neste caso, *habilite a verificação em duas etapas*).  
+3) *Confirme o cadastro:* a chave de acesso (token) é *enviada por e-mail* ao endereço vinculado ao seu gov.br.  
 4) *Guarde o token:* ele será informado no cabeçalho das requisições quando você for usar a API em sistemas/relatórios.  
-5) *Atenção aos limites:* existem limites por minuto; alguns endpoints (como **Bolsa Família por município*) ficam em uma cota mais restrita.  
+5) *Atenção aos limites:* existem limites por minuto; alguns endpoints (como *Bolsa Família por município*) ficam em uma cota mais restrita.  
 
 > Observação prática: ao usar a API em qualquer ferramenta, inclua o token no cabeçalho conforme instruções oficiais do Portal (chave chave-api-dados). Não é necessário detalhar código aqui; basta ter o token à mão e seguir a documentação.
 
