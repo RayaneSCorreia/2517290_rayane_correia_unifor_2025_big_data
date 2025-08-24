@@ -101,19 +101,26 @@ https://servicodados.ibge.gov.br/api/docs/localidades
 - *Apache Airflow* (orquestração de pipelines)  
 - *Postgres* (metadados do Airflow)  
 - *Docker & Docker Compose* (containerização e orquestração local)  
-- *Python (PySpark, Requests, Pandas)*  
+- *Python (PySpark, Requests)*  
 
 ---
 
 ## ▶ Como executar localmente
 
-1) *Subir os serviços*  
+1) *Subir os serviços*
+ Dentro da pasta do arquivo executar:
 ```bash
 docker-compose up -d
-acesse: Airflow (http://localhost:8088) e MinIO (http://localhost:9001).
+Esse comando vai inicar o conteiner e instanciar todos os serviços nas suas devidas portas:
+Airflow (http://localhost:8088) e MinIO (http://localhost:9001) e Spark (http://localhost:8080)
+
+Acesse: Airflow (http://localhost:8088) e MinIO (http://localhost:9001) e Spark (http://localhost:8080)
 	2.	Executar a DAG
 Na UI do Airflow, habilite e rode a DAG pipeline_bolsa_familia.
 ```
+Saídas:
+
+
 👩‍💻 Autora
 
 Rayane Correia — Analytics Engineer | Pós-graduação em Engenharia de Dados – UNIFOR
